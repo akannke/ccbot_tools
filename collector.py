@@ -8,7 +8,7 @@ PUBLIC_CHANNEL = "lightning_executions_FX_BTC_JPY"
 
 FILE_NAME = "executions.csv"
 
-logging.basicConfig(filename="test.log", level=logging.INFO)
+logging.basicConfig(filename="test.log", level=logging.WARNING)
 
 sio = socketio.Client()
 
@@ -17,10 +17,10 @@ def connect():
     logging.info("connection establised")
     def cb(err):
         if err:
-            logging.error(PUBLIC_CHANNEL, "Subscribe Error:", err)
+            logging.error(f"{PUBLIC_CHANNEL} Subscribe Error: {err}")
             return
         else:
-            logging.info(PUBLIC_CHANNEL, "Subscribed.")
+            logging.info(f"{PUBLIC_CHANNEL} Subscribed.")
 
     sio.emit("subscribe", PUBLIC_CHANNEL, callback=cb)
 
@@ -44,6 +44,11 @@ if __name__ == "__main__":
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
 
-    sio.connect(ENDPOINT_URL, transports="websocket")
-    sio.wait()
+    try:
+        sio.connect(ENDPOINT_URL, transports="websocket")
+        sio.wait()
+    except Exception as e:
+        logging.exception(e)
+        exit()
+
 
