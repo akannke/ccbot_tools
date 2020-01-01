@@ -38,7 +38,7 @@ def receive_event(msgs):
 
 
 if __name__ == "__main__":
-    if os.path.isfile(FILE_NAME):
+    if not os.path.isfile(FILE_NAME):
         with open(FILE_NAME, "w") as f:
             fieldnames = ["id", "side", "price", "size", "exec_date", "buy_child_order_acceptance_id", "sell_child_order_acceptance_id"] 
             writer = csv.DictWriter(f, fieldnames=fieldnames)
