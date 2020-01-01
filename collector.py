@@ -10,9 +10,9 @@ FILE_NAME = "executions.csv"
 
 logger = logging.getLogger(__name__)
 fmt = "%(asctime)s %(levelname)s %(name)s :%(message)s"
-logging.basicConfig(filename="test.log", level=logging.INFO, format=fmt)
+logging.basicConfig(level=logging.DEBUG, format=fmt)
 
-sio = socketio.Client()
+sio = socketio.Client(logger=logger)
 
 @sio.event
 def connect():
@@ -25,6 +25,10 @@ def connect():
             logger.info(f"{PUBLIC_CHANNEL} Subscribed.")
 
     sio.emit("subscribe", PUBLIC_CHANNEL, callback=cb)
+
+@sio.event
+def connect_error():
+    logger.info("The connection failed!")
 
 @sio.event
 def disconnect():
@@ -52,5 +56,3 @@ if __name__ == "__main__":
     except Exception as e:
         logger.exception(e)
         exit()
-
-
