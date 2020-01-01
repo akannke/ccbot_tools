@@ -8,25 +8,27 @@ PUBLIC_CHANNEL = "lightning_executions_FX_BTC_JPY"
 
 FILE_NAME = "executions.csv"
 
-logging.basicConfig(filename="test.log", level=logging.WARNING)
+logger = logging.getLogger(__name__)
+fmt = "%(asctime)s %(levelname)s %(name)s :%(message)s"
+logging.basicConfig(filename="test.log", level=logging.INFO, format=fmt)
 
 sio = socketio.Client()
 
 @sio.event
 def connect():
-    logging.info("connection establised")
+    logger.info("connection establised")
     def cb(err):
         if err:
-            logging.error(f"{PUBLIC_CHANNEL} Subscribe Error: {err}")
+            logger.error(f"{PUBLIC_CHANNEL} Subscribe Error: {err}")
             return
         else:
-            logging.info(f"{PUBLIC_CHANNEL} Subscribed.")
+            logger.info(f"{PUBLIC_CHANNEL} Subscribed.")
 
     sio.emit("subscribe", PUBLIC_CHANNEL, callback=cb)
 
 @sio.event
 def disconnect():
-    logging.info("disconnected from server")
+    logger.info("disconnected from server")
 
 @sio.on(PUBLIC_CHANNEL)
 def receive_event(msgs):
@@ -48,7 +50,7 @@ if __name__ == "__main__":
         sio.connect(ENDPOINT_URL, transports="websocket")
         sio.wait()
     except Exception as e:
-        logging.exception(e)
+        logger.exception(e)
         exit()
 
 
